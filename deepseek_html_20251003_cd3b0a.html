@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificação Segura</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #FFD700;
+            --primary-dark: #E6C200;
+            --secondary: #333333;
+            --light: #F5F5F5;
+            --white: #FFFFFF;
+            --gray: #E0E0E0;
+            --dark-gray: #666666;
+            --success: #28A745;
+            --danger: #DC3545;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --radius: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--secondary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: var(--primary);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 24px;
+        }
+
+        .logo h1 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        /* Main Content */
+        main {
+            min-height: calc(100vh - 140px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px 0;
+        }
+
+        .verification-container {
+            background-color: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 30px;
+            max-width: 500px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .verification-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .verification-header h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .verification-header p {
+            color: var(--dark-gray);
+        }
+
+        /* Camera Section */
+        .camera-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .camera-frame {
+            width: 100%;
+            height: 300px;
+            background-color: var(--gray);
+            border-radius: var(--radius);
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .face-overlay {
+            width: 200px;
+            height: 200px;
+            border: 3px solid var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .face-overlay::before {
+            content: "Posicione seu rosto aqui";
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            color: var(--dark-gray);
+            font-size: 14px;
+        }
+
+        .video-element {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1); /* Espelhamento */
+        }
+
+        .camera-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--dark-gray);
+        }
+
+        .camera-placeholder i {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        /* Status */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: var(--radius);
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+        }
+
+        .status-indicator.success {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+
+        .status-indicator i {
+            font-size: 18px;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: var(--secondary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--gray);
+            color: var(--secondary);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--dark-gray);
+            color: var(--white);
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: var(--white);
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Preview Section */
+        .preview-container {
+            display: none;
+            text-align: center;
+        }
+
+        .preview-image {
+            width: 100%;
+            max-width: 300px;
+            border-radius: var(--radius);
+            margin: 0 auto 20px;
+            border: 2px solid var(--gray);
+        }
+
+        /* Instructions */
+        .instructions {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: rgba(255, 215, 0, 0.1);
+            border-radius: var(--radius);
+        }
+
+        .instructions h3 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .instructions ul {
+            list-style-type: none;
+            padding-left: 10px;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .instructions li i {
+            color: var(--primary);
+            margin-top: 3px;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--secondary);
+            color: var(--white);
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .security-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .verification-container {
+                padding: 20px;
+            }
+            
+            .face-overlay {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .camera-frame {
+                height: 250px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .face-overlay {
+                width: 160px;
+                height: 160px;
+            }
+            
+            .camera-frame {
+                height: 220px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-camera"></i>
+                    <h1>Verificação Segura</h1>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <div class="verification-container">
+                <div class="verification-header">
+                    <h2>Verificação de Identidade</h2>
+                    <p>Posicione seu rosto dentro do círculo para continuar</p>
+                </div>
+
+                <div class="status-indicator" id="statusIndicator">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="statusText">Aguardando acesso à câmera</span>
+                </div>
+
+                <div class="camera-container">
+                    <div class="camera-frame">
+                        <div class="face-overlay"></div>
+                        <video id="videoElement" class="video-element" autoplay playsinline></video>
+                        <div class="camera-placeholder" id="cameraPlaceholder">
+                            <i class="fas fa-camera"></i>
+                            <p>Câmera não acessível</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" id="toggleCameraBtn">
+                        <i class="fas fa-sync-alt"></i>
+                        Alternar Câmera
+                    </button>
+                    <button class="btn btn-primary" id="captureBtn" disabled>
+                        <i class="fas fa-camera"></i>
+                        Tirar Foto
+                    </button>
+                </div>
+
+                <div class="preview-container" id="previewContainer">
+                    <img id="previewImage" class="preview-image" src="" alt="Preview da foto">
+                    <div class="button-group">
+                        <button class="btn btn-secondary" id="retakeBtn">
+                            <i class="fas fa-redo"></i>
+                            Tirar Outra
+                        </button>
+                        <button class="btn btn-success" id="confirmBtn">
+                            <i class="fas fa-check"></i>
+                            Confirmar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="instructions">
+                    <h3><i class="fas fa-lightbulb"></i> Dicas para uma boa verificação</h3>
+                    <ul>
+                        <li><i class="fas fa-check-circle"></i> Certifique-se de estar em um ambiente bem iluminado</li>
+                        <li><i class="fas fa-check-circle"></i> Mantenha o rosto centralizado dentro do círculo</li>
+                        <li><i class="fas fa-check-circle"></i> Remova óculos escuros ou qualquer coisa que cubra o rosto</li>
+                        <li><i class="fas fa-check-circle"></i> Mantenha uma expressão neutra e olhe diretamente para a câmera</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p>&copy; 2023 Verificação Segura. Todos os direitos reservados.</p>
+                <div class="security-badge">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Sistema protegido com criptografia de ponta</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos DOM
+            const videoElement = document.getElementById('videoElement');
+            const cameraPlaceholder = document.getElementById('cameraPlaceholder');
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            const toggleCameraBtn = document.getElementById('toggleCameraBtn');
+            const captureBtn = document.getElementById('captureBtn');
+            const previewContainer = document.getElementById('previewContainer');
+            const previewImage = document.getElementById('previewImage');
+            const retakeBtn = document.getElementById('retakeBtn');
+            const confirmBtn = document.getElementById('confirmBtn');
+            
+            // Variáveis de estado
+            let stream = null;
+            let currentFacingMode = 'user'; // 'user' para frontal, 'environment' para traseira
+            let faceDetected = false;
+            let faceDetectionInterval = null;
+            
+            // Inicializar câmera
+            initCamera();
+            
+            // Event Listeners
+            toggleCameraBtn.addEventListener('click', toggleCamera);
+            captureBtn.addEventListener('click', capturePhoto);
+            retakeBtn.addEventListener('click', retakePhoto);
+            confirmBtn.addEventListener('click', confirmPhoto);
+            
+            // Função para inicializar a câmera
+            async function initCamera() {
+                try {
+                    // Solicitar acesso à câmera
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: { 
+                            facingMode: currentFacingMode,
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        }
+                    });
+                    
+                    // Conectar o stream ao elemento de vídeo
+                    videoElement.srcObject = stream;
+                    
+                    // Esconder placeholder e mostrar vídeo
+                    cameraPlaceholder.style.display = 'none';
+                    videoElement.style.display = 'block';
+                    
+                    // Atualizar status
+                    updateStatus('Câmera ativa - Posicione seu rosto', 'info');
+                    
+                    // Simular detecção facial após 2 segundos
+                    setTimeout(() => {
+                        simulateFaceDetection();
+                    }, 2000);
+                    
+                } catch (error) {
+                    console.error('Erro ao acessar a câmera:', error);
+                    cameraPlaceholder.style.display = 'flex';
+                    videoElement.style.display = 'none';
+                    updateStatus('Erro ao acessar a câmera. Verifique as permissões.', 'error');
+                    captureBtn.disabled = true;
+                }
+            }
+            
+            // Função para alternar entre câmeras
+            async function toggleCamera() {
+                if (stream) {
+                    // Parar stream atual
+                    stream.getTracks().forEach(track => track.stop());
+                }
+                
+                // Alternar modo da câmera
+                currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
+                
+                // Atualizar status
+                updateStatus('Alternando câmera...', 'info');
+                captureBtn.disabled = true;
+                
+                // Reinicializar câmera
+                await initCamera();
+            }
+            
+            // Função para simular detecção facial
+            function simulateFaceDetection() {
+                updateStatus('Rosto detectado! Você pode tirar a foto.', 'success');
+                captureBtn.disabled = false;
+                faceDetected = true;
+                
+                // Simular que o rosto está sendo rastreado
+                faceDetectionInterval = setInterval(() => {
+                    if (!faceDetected) {
+                        clearInterval(faceDetectionInterval);
+                    }
+                }, 1000);
+            }
+            
+            // Função para capturar foto
+            function capturePhoto() {
+                if (!faceDetected) {
+                    updateStatus('Posicione seu rosto no círculo antes de tirar a foto.', 'error');
+                    return;
+                }
+                
+                // Criar canvas para capturar o frame atual
+                const canvas = document.createElement('canvas');
+                canvas.width = videoElement.videoWidth;
+                canvas.height = videoElement.videoHeight;
+                const context = canvas.getContext('2d');
+                
+                // Espelhar a imagem para corresponder ao preview
+                context.translate(canvas.width, 0);
+                context.scale(-1, 1);
+                context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                
+                // Converter para data URL
+                const imageDataUrl = canvas.toDataURL('image/png');
+                
+                // Exibir preview
+                previewImage.src = imageDataUrl;
+                previewContainer.style.display = 'block';
+                
+                // Parar detecção facial
+                faceDetected = false;
+                if (faceDetectionInterval) {
+                    clearInterval(faceDetectionInterval);
+                }
+                
+                // Atualizar status
+                updateStatus('Foto capturada. Confirme ou tire outra.', 'info');
+            }
+            
+            // Função para refazer a foto
+            function retakePhoto() {
+                previewContainer.style.display = 'none';
+                updateStatus('Câmera ativa - Posicione seu rosto', 'info');
+                
+                // Simular detecção facial novamente após 1 segundo
+                setTimeout(() => {
+                    simulateFaceDetection();
+                }, 1000);
+            }
+            
+            // Função para confirmar a foto
+            function confirmPhoto() {
+                updateStatus('Processando verificação...', 'info');
+                
+                // Simular processamento
+                setTimeout(() => {
+                    updateStatus('Verificação concluída com sucesso!', 'success');
+                    
+                    // Desabilitar botões após confirmação
+                    captureBtn.disabled = true;
+                    confirmBtn.disabled = true;
+                    
+                    // Mostrar mensagem de sucesso
+                    setTimeout(() => {
+                        alert('Verificação concluída! Sua identidade foi confirmada com sucesso.');
+                    }, 500);
+                }, 2000);
+            }
+            
+            // Função para atualizar o status
+            function updateStatus(message, type) {
+                statusText.textContent = message;
+                
+                // Remover classes anteriores
+                statusIndicator.classList.remove('success');
+                
+                // Adicionar classe baseada no tipo
+                if (type === 'success') {
+                    statusIndicator.classList.add('success');
+                    statusIndicator.innerHTML = `<i class="fas fa-check-circle"></i><span>${message}</span>`;
+                } else if (type === 'error') {
+                    statusIndicator.innerHTML = `<i class="fas fa-exclamation-circle"></i><span>${message}</span>`;
+                } else {
+                    statusIndicator.innerHTML = `<i class="fas fa-info-circle"></i><span>${message}</span>`;
+                }
+            }
+            
+            // Limpar recursos quando a página for fechada
+            window.addEventListener('beforeunload', () => {
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
+                }
+                if (faceDetectionInterval) {
+                    clearInterval(faceDetectionInterval);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
