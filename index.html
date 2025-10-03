@@ -123,9 +123,9 @@
 
         .face-overlay {
             width: 200px;
-            height: 200px;
+            height: 250px;
             border: 3px solid var(--primary);
-            border-radius: 50%;
+            border-radius: 50% / 60%;
             position: absolute;
             z-index: 2;
             pointer-events: none;
@@ -179,6 +179,11 @@
         .status-indicator.success {
             background-color: rgba(40, 167, 69, 0.1);
             color: var(--success);
+        }
+
+        .status-indicator.info {
+            background-color: rgba(255, 215, 0, 0.1);
+            color: var(--secondary);
         }
 
         .status-indicator i {
@@ -314,7 +319,7 @@
             
             .face-overlay {
                 width: 180px;
-                height: 180px;
+                height: 220px;
             }
             
             .camera-frame {
@@ -329,7 +334,7 @@
             
             .face-overlay {
                 width: 160px;
-                height: 160px;
+                height: 200px;
             }
             
             .camera-frame {
@@ -355,11 +360,11 @@
             <div class="verification-container">
                 <div class="verification-header">
                     <h2>Verificação de Identidade</h2>
-                    <p>Posicione seu rosto dentro do círculo para continuar</p>
+                    <p>Posicione seu rosto dentro do formato oval para continuar</p>
                 </div>
 
-                <div class="status-indicator" id="statusIndicator">
-                    <i class="fas fa-exclamation-circle"></i>
+                <div class="status-indicator info" id="statusIndicator">
+                    <i class="fas fa-info-circle"></i>
                     <span id="statusText">Aguardando acesso à câmera</span>
                 </div>
 
@@ -375,10 +380,6 @@
                 </div>
 
                 <div class="button-group">
-                    <button class="btn btn-secondary" id="toggleCameraBtn">
-                        <i class="fas fa-sync-alt"></i>
-                        Alternar Câmera
-                    </button>
                     <button class="btn btn-primary" id="captureBtn" disabled>
                         <i class="fas fa-camera"></i>
                         Tirar Foto
@@ -403,7 +404,7 @@
                     <h3><i class="fas fa-lightbulb"></i> Dicas para uma boa verificação</h3>
                     <ul>
                         <li><i class="fas fa-check-circle"></i> Certifique-se de estar em um ambiente bem iluminado</li>
-                        <li><i class="fas fa-check-circle"></i> Mantenha o rosto centralizado dentro do círculo</li>
+                        <li><i class="fas fa-check-circle"></i> Mantenha o rosto centralizado dentro do formato oval</li>
                         <li><i class="fas fa-check-circle"></i> Remova óculos escuros ou qualquer coisa que cubra o rosto</li>
                         <li><i class="fas fa-check-circle"></i> Mantenha uma expressão neutra e olhe diretamente para a câmera</li>
                     </ul>
@@ -431,7 +432,6 @@
             const cameraPlaceholder = document.getElementById('cameraPlaceholder');
             const statusIndicator = document.getElementById('statusIndicator');
             const statusText = document.getElementById('statusText');
-            const toggleCameraBtn = document.getElementById('toggleCameraBtn');
             const captureBtn = document.getElementById('captureBtn');
             const previewContainer = document.getElementById('previewContainer');
             const previewImage = document.getElementById('previewImage');
@@ -440,7 +440,6 @@
             
             // Variáveis de estado
             let stream = null;
-            let currentFacingMode = 'user'; // 'user' para frontal, 'environment' para traseira
             let faceDetected = false;
             let faceDetectionInterval = null;
             
@@ -448,7 +447,6 @@
             initCamera();
             
             // Event Listeners
-            toggleCameraBtn.addEventListener('click', toggleCamera);
             captureBtn.addEventListener('click', capturePhoto);
             retakeBtn.addEventListener('click', retakePhoto);
             confirmBtn.addEventListener('click', confirmPhoto);
@@ -456,10 +454,10 @@
             // Função para inicializar a câmera
             async function initCamera() {
                 try {
-                    // Solicitar acesso à câmera
+                    // Solicitar acesso à câmera frontal por padrão
                     stream = await navigator.mediaDevices.getUserMedia({
                         video: { 
-                            facingMode: currentFacingMode,
+                            facingMode: 'user', // Sempre usar câmera frontal
                             width: { ideal: 1280 },
                             height: { ideal: 720 }
                         }
@@ -473,7 +471,7 @@
                     videoElement.style.display = 'block';
                     
                     // Atualizar status
-                    updateStatus('Câmera ativa - Posicione seu rosto', 'info');
+                    updateStatus('Câmera ativa - Posicione seu rosto no formato oval', 'info');
                     
                     // Simular detecção facial após 2 segundos
                     setTimeout(() => {
@@ -487,24 +485,6 @@
                     updateStatus('Erro ao acessar a câmera. Verifique as permissões.', 'error');
                     captureBtn.disabled = true;
                 }
-            }
-            
-            // Função para alternar entre câmeras
-            async function toggleCamera() {
-                if (stream) {
-                    // Parar stream atual
-                    stream.getTracks().forEach(track => track.stop());
-                }
-                
-                // Alternar modo da câmera
-                currentFacingMode = currentFacingMode === 'user' ? 'environment' : 'user';
-                
-                // Atualizar status
-                updateStatus('Alternando câmera...', 'info');
-                captureBtn.disabled = true;
-                
-                // Reinicializar câmera
-                await initCamera();
             }
             
             // Função para simular detecção facial
@@ -524,7 +504,7 @@
             // Função para capturar foto
             function capturePhoto() {
                 if (!faceDetected) {
-                    updateStatus('Posicione seu rosto no círculo antes de tirar a foto.', 'error');
+                    updateStatus('Posicione seu rosto no formato oval antes de tirar a foto.', 'error');
                     return;
                 }
                 
@@ -559,7 +539,7 @@
             // Função para refazer a foto
             function retakePhoto() {
                 previewContainer.style.display = 'none';
-                updateStatus('Câmera ativa - Posicione seu rosto', 'info');
+                updateStatus('Câmera ativa - Posicione seu rosto no formato oval', 'info');
                 
                 // Simular detecção facial novamente após 1 segundo
                 setTimeout(() => {
@@ -591,7 +571,7 @@
                 statusText.textContent = message;
                 
                 // Remover classes anteriores
-                statusIndicator.classList.remove('success');
+                statusIndicator.classList.remove('success', 'info');
                 
                 // Adicionar classe baseada no tipo
                 if (type === 'success') {
@@ -600,6 +580,7 @@
                 } else if (type === 'error') {
                     statusIndicator.innerHTML = `<i class="fas fa-exclamation-circle"></i><span>${message}</span>`;
                 } else {
+                    statusIndicator.classList.add('info');
                     statusIndicator.innerHTML = `<i class="fas fa-info-circle"></i><span>${message}</span>`;
                 }
             }
