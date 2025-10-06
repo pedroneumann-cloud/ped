@@ -534,6 +534,28 @@
         .hidden {
             display: none !important;
         }
+
+        /* Loading states */
+        .btn-loading {
+            position: relative;
+            color: transparent !important;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -565,20 +587,20 @@
                             Não Permitir
                         </button>
                         <button class="btn-permission btn-allow" id="allowBtn">
-                            <i class="fas fa-check"></i> Permitir
+                            <i class="fas fa-check"></i> Permitir Câmera
                         </button>
                     </div>
                 </div>
 
                 <div class="status-indicator hidden" id="statusIndicator">
                     <i class="fas fa-info-circle"></i>
-                    <span id="statusText">Iniciando câmera...</span>
+                    <span id="statusText">Processando...</span>
                 </div>
 
-                <div class="camera-container">
+                <div class="camera-container hidden" id="cameraSection">
                     <div class="camera-frame">
                         <div class="face-overlay"></div>
-                        <video id="videoElement" class="video-element hidden" autoplay playsinline></video>
+                        <video id="videoElement" class="video-element" autoplay playsinline></video>
                         <div class="camera-placeholder hidden" id="cameraPlaceholder">
                             <i class="fas fa-camera"></i>
                             <p>Câmera não acessível</p>
@@ -587,8 +609,8 @@
                     </div>
                 </div>
 
-                <div class="button-group">
-                    <button class="btn btn-primary hidden" id="captureBtn">
+                <div class="button-group hidden" id="captureSection">
+                    <button class="btn btn-primary" id="captureBtn">
                         <i class="fas fa-camera"></i>
                         Tirar Foto
                     </button>
@@ -641,8 +663,10 @@
             const permissionRequest = document.getElementById('permissionRequest');
             const statusIndicator = document.getElementById('statusIndicator');
             const statusText = document.getElementById('statusText');
+            const cameraSection = document.getElementById('cameraSection');
             const videoElement = document.getElementById('videoElement');
             const cameraPlaceholder = document.getElementById('cameraPlaceholder');
+            const captureSection = document.getElementById('captureSection');
             const captureBtn = document.getElementById('captureBtn');
             const previewContainer = document.getElementById('previewContainer');
             const previewImage = document.getElementById('previewImage');
@@ -658,27 +682,22 @@
             let permissionGranted = false;
             
             // Event Listeners
-            allowBtn.addEventListener('click', initCamera);
+            allowBtn.addEventListener('click', requestCameraPermission);
             denyBtn.addEventListener('click', handlePermissionDenied);
             captureBtn.addEventListener('click', capturePhoto);
             retakeBtn.addEventListener('click', retakePhoto);
             confirmBtn.addEventListener('click', confirmPhoto);
             
-            // Função para tratar negação de permissão
-            function handlePermissionDenied() {
-                permissionRequest.classList.add('hidden');
-                statusIndicator.classList.remove('hidden');
-                updateStatus('A câmera é necessária para a verificação de identidade. Você pode recarregar a página para tentar novamente.', 'error');
-            }
-            
-            // Função para inicializar a câmera
-            async function initCamera() {
+            // Função para solicitar permissão da câmera
+            async function requestCameraPermission() {
                 try {
-                    permissionRequest.classList.add('hidden');
+                    // Mostrar estado de carregamento
+                    allowBtn.classList.add('btn-loading');
+                    allowBtn.disabled = true;
                     statusIndicator.classList.remove('hidden');
                     updateStatus('Solicitando acesso à câmera...', 'info');
                     
-                    // Solicitar acesso à câmera frontal
+                    // Solicitar acesso à câmera frontal diretamente
                     stream = await navigator.mediaDevices.getUserMedia({
                         video: { 
                             facingMode: 'user',
@@ -689,20 +708,22 @@
                     
                     permissionGranted = true;
                     
+                    // Esconder solicitação de permissão
+                    permissionRequest.classList.add('hidden');
+                    
                     // Conectar o stream ao elemento de vídeo
                     videoElement.srcObject = stream;
                     
-                    // Mostrar vídeo e esconder placeholder
-                    videoElement.classList.remove('hidden');
-                    cameraPlaceholder.classList.add('hidden');
+                    // Mostrar seção da câmera
+                    cameraSection.classList.remove('hidden');
                     
                     // Atualizar status
                     updateStatus('Câmera ativa - Posicione seu rosto no formato oval', 'info');
                     
                     // Mostrar botão de captura após um breve delay
                     setTimeout(() => {
-                        captureBtn.classList.remove('hidden');
-                    }, 500);
+                        captureSection.classList.remove('hidden');
+                    }, 1000);
                     
                     // Simular detecção facial após 4 segundos
                     setTimeout(() => {
@@ -712,28 +733,38 @@
                 } catch (error) {
                     console.error('Erro ao acessar a câmera:', error);
                     handleCameraError(error);
+                } finally {
+                    allowBtn.classList.remove('btn-loading');
+                    allowBtn.disabled = false;
                 }
+            }
+            
+            // Função para tratar negação de permissão
+            function handlePermissionDenied() {
+                permissionRequest.classList.add('hidden');
+                statusIndicator.classList.remove('hidden');
+                updateStatus('A câmera é necessária para a verificação de identidade. Você pode recarregar a página para tentar novamente.', 'error');
             }
             
             // Função para tratar erros da câmera
             function handleCameraError(error) {
-                videoElement.classList.add('hidden');
-                cameraPlaceholder.classList.remove('hidden');
-                
                 let errorMessage = 'Erro ao acessar a câmera. ';
                 
                 if (error.name === 'NotAllowedError') {
-                    errorMessage = 'Permissão da câmera negada. Recarregue a página para tentar novamente.';
+                    errorMessage = 'Permissão da câmera negada. Por favor, permita o acesso à câmera nas configurações do seu navegador e recarregue a página.';
                 } else if (error.name === 'NotFoundError') {
-                    errorMessage = 'Nenhuma câmera frontal encontrada.';
+                    errorMessage = 'Nenhuma câmera frontal encontrada. Verifique se seu dispositivo possui uma câmera frontal.';
                 } else if (error.name === 'NotSupportedError') {
-                    errorMessage = 'Seu navegador não suporta acesso à câmera.';
+                    errorMessage = 'Seu navegador não suporta acesso à câmera. Tente usar Chrome, Firefox ou Safari.';
+                } else if (error.name === 'NotReadableError') {
+                    errorMessage = 'A câmera está sendo usada por outro aplicativo. Feche outros aplicativos que possam estar usando a câmera.';
                 } else {
-                    errorMessage = 'Não foi possível acessar a câmera. Verifique as permissões.';
+                    errorMessage = 'Não foi possível acessar a câmera. Verifique as permissões do navegador.';
                 }
                 
                 updateStatus(errorMessage, 'error');
-                captureBtn.classList.add('hidden');
+                permissionRequest.classList.add('hidden');
+                statusIndicator.classList.remove('hidden');
             }
             
             // Função para simular detecção facial
@@ -790,7 +821,7 @@
                     // Exibir preview
                     previewImage.src = imageDataUrl;
                     previewContainer.classList.remove('hidden');
-                    captureBtn.classList.add('hidden');
+                    captureSection.classList.add('hidden');
                     
                     // Parar detecção facial
                     faceDetected = false;
@@ -810,7 +841,7 @@
             // Função para refazer a foto
             function retakePhoto() {
                 previewContainer.classList.add('hidden');
-                captureBtn.classList.remove('hidden');
+                captureSection.classList.remove('hidden');
                 updateStatus('Câmera ativa - Posicione seu rosto no formato oval', 'info');
                 
                 // Simular detecção facial novamente após 2 segundos
