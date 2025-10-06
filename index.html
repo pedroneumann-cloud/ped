@@ -145,11 +145,6 @@
             z-index: 2;
             pointer-events: none;
             box-sizing: border-box;
-            transition: border-color 0.5s ease;
-        }
-
-        .face-overlay.verified {
-            border-color: var(--success);
         }
 
         .face-overlay::before {
@@ -174,6 +169,89 @@
             object-fit: cover;
             transform: scaleX(-1);
             border-radius: 40% / 50%;
+            /* Remover controles nativos */
+            -webkit-appearance: none;
+            appearance: none;
+            /* Remover controles de vídeo no iOS */
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        /* Esconder controles nativos do vídeo em todos os navegadores */
+        .video-element::-webkit-media-controls {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-panel {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-play-button {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-start-playback-button {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-timeline {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-current-time-display {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-time-remaining-display {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-timeline-container {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-volume-control-container {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-volume-slider {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-seek-back-button {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-seek-forward-button {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-fullscreen-button {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-rewind-button {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-return-to-realtime-button {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-toggle-closed-captions-button {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-overlay-enclosure {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-mute-button {
+            display: none !important;
         }
 
         .camera-placeholder {
@@ -450,16 +528,6 @@
         .loading {
             animation: pulse 1.5s infinite;
         }
-
-        /* Esconder controles nativos do vídeo */
-        .video-element::-webkit-media-controls {
-            display: none !important;
-        }
-        
-        .video-element {
-            -webkit-appearance: none;
-            appearance: none;
-        }
     </style>
 </head>
 <body>
@@ -491,7 +559,7 @@
                 <div class="camera-section" id="cameraSection">
                     <div class="camera-container">
                         <div class="camera-frame">
-                            <div class="face-overlay" id="faceOverlay"></div>
+                            <div class="face-overlay"></div>
                             <video id="videoElement" class="video-element" autoplay playsinline></video>
                             <div class="camera-placeholder" id="cameraPlaceholder">
                                 <i class="fas fa-camera"></i>
@@ -564,7 +632,6 @@
             const previewImage = document.getElementById('previewImage');
             const retakeBtn = document.getElementById('retakeBtn');
             const confirmBtn = document.getElementById('confirmBtn');
-            const faceOverlay = document.getElementById('faceOverlay');
             
             // Variáveis de estado
             let stream = null;
@@ -730,9 +797,6 @@
                 cameraSection.style.display = 'block';
                 previewSection.style.display = 'none';
                 
-                // Resetar a cor da borda para amarelo
-                faceOverlay.classList.remove('verified');
-                
                 // Reiniciar câmera
                 initCamera();
                 
@@ -752,13 +816,6 @@
                 // Simular processamento
                 setTimeout(() => {
                     statusIndicator.classList.remove('loading');
-                    
-                    // Mudar a cor da borda para verde
-                    faceOverlay.classList.add('verified');
-                    
-                    // Esconder a câmera
-                    cameraSection.style.display = 'none';
-                    
                     updateStatus('Verificação concluída com sucesso!', 'success');
                     
                     // Mostrar mensagem de sucesso
