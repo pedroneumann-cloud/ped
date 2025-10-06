@@ -31,12 +31,16 @@
             background-color: var(--light);
             color: var(--secondary);
             line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
+            width: 100%;
         }
 
         /* Header */
@@ -46,12 +50,13 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            flex-shrink: 0;
         }
 
         .header-content {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             padding: 15px 0;
         }
 
@@ -72,11 +77,12 @@
 
         /* Main Content */
         main {
-            min-height: calc(100vh - 140px);
+            flex: 1;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 40px 0;
+            padding: 20px 0;
+            width: 100%;
         }
 
         .verification-container {
@@ -101,19 +107,24 @@
 
         .verification-header p {
             color: var(--dark-gray);
+            font-size: 16px;
         }
 
         /* Camera Section */
         .camera-container {
             position: relative;
             margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
         }
 
         .camera-frame {
-            width: 100%;
-            height: 300px;
+            width: 280px;
+            height: 350px;
             background-color: var(--gray);
-            border-radius: var(--radius);
+            border-radius: 40% / 50%;
             overflow: hidden;
             position: relative;
             display: flex;
@@ -122,31 +133,38 @@
         }
 
         .face-overlay {
-            width: 200px;
-            height: 250px;
+            width: 100%;
+            height: 100%;
             border: 3px solid var(--primary);
-            border-radius: 50% / 60%;
+            border-radius: 40% / 50%;
             position: absolute;
             z-index: 2;
             pointer-events: none;
+            box-sizing: border-box;
         }
 
         .face-overlay::before {
             content: "Posicione seu rosto aqui";
             position: absolute;
-            bottom: -40px;
+            bottom: -45px;
             left: 50%;
             transform: translateX(-50%);
             white-space: nowrap;
             color: var(--dark-gray);
             font-size: 14px;
+            background: var(--white);
+            padding: 5px 12px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            z-index: 3;
         }
 
         .video-element {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transform: scaleX(-1); /* Espelhamento */
+            transform: scaleX(-1);
+            border-radius: 40% / 50%;
         }
 
         .camera-placeholder {
@@ -156,6 +174,11 @@
             justify-content: center;
             height: 100%;
             color: var(--dark-gray);
+            border-radius: 40% / 50%;
+            background: var(--gray);
+            width: 100%;
+            text-align: center;
+            padding: 20px;
         }
 
         .camera-placeholder i {
@@ -170,10 +193,11 @@
             justify-content: center;
             gap: 10px;
             margin-bottom: 20px;
-            padding: 10px;
+            padding: 12px;
             border-radius: var(--radius);
-            background-color: rgba(220, 53, 69, 0.1);
-            color: var(--danger);
+            background-color: rgba(255, 215, 0, 0.1);
+            color: var(--secondary);
+            text-align: center;
         }
 
         .status-indicator.success {
@@ -181,23 +205,25 @@
             color: var(--success);
         }
 
-        .status-indicator.info {
-            background-color: rgba(255, 215, 0, 0.1);
-            color: var(--secondary);
+        .status-indicator.error {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
         }
 
         .status-indicator i {
             font-size: 18px;
+            flex-shrink: 0;
         }
 
         /* Buttons */
         .button-group {
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            width: 100%;
         }
 
         .btn {
-            padding: 12px 20px;
+            padding: 14px 20px;
             border: none;
             border-radius: var(--radius);
             font-weight: 600;
@@ -208,6 +234,8 @@
             justify-content: center;
             gap: 8px;
             flex: 1;
+            font-size: 16px;
+            min-height: 50px;
         }
 
         .btn-primary {
@@ -217,6 +245,7 @@
 
         .btn-primary:hover {
             background-color: var(--primary-dark);
+            transform: translateY(-2px);
         }
 
         .btn-secondary {
@@ -227,6 +256,7 @@
         .btn-secondary:hover {
             background-color: var(--dark-gray);
             color: var(--white);
+            transform: translateY(-2px);
         }
 
         .btn-success {
@@ -236,25 +266,34 @@
 
         .btn-success:hover {
             background-color: #218838;
+            transform: translateY(-2px);
         }
 
         .btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+            transform: none !important;
         }
 
         /* Preview Section */
         .preview-container {
             display: none;
             text-align: center;
+            width: 100%;
+        }
+
+        .preview-image-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
         }
 
         .preview-image {
-            width: 100%;
-            max-width: 300px;
-            border-radius: var(--radius);
-            margin: 0 auto 20px;
-            border: 2px solid var(--gray);
+            width: 280px;
+            height: 350px;
+            border-radius: 40% / 50%;
+            border: 3px solid var(--primary);
+            object-fit: cover;
         }
 
         /* Instructions */
@@ -266,27 +305,29 @@
         }
 
         .instructions h3 {
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
+            font-size: 18px;
         }
 
         .instructions ul {
             list-style-type: none;
-            padding-left: 10px;
         }
 
         .instructions li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: flex;
             align-items: flex-start;
             gap: 10px;
+            font-size: 14px;
         }
 
         .instructions li i {
             color: var(--primary);
-            margin-top: 3px;
+            margin-top: 2px;
+            flex-shrink: 0;
         }
 
         /* Footer */
@@ -295,6 +336,8 @@
             color: var(--white);
             padding: 20px 0;
             text-align: center;
+            flex-shrink: 0;
+            margin-top: auto;
         }
 
         .footer-content {
@@ -314,16 +357,31 @@
         /* Responsive */
         @media (max-width: 768px) {
             .verification-container {
-                padding: 20px;
-            }
-            
-            .face-overlay {
-                width: 180px;
-                height: 220px;
+                padding: 20px 15px;
             }
             
             .camera-frame {
-                height: 250px;
+                width: 250px;
+                height: 310px;
+            }
+            
+            .preview-image {
+                width: 250px;
+                height: 310px;
+            }
+            
+            .btn {
+                padding: 12px 16px;
+                font-size: 15px;
+                min-height: 48px;
+            }
+            
+            .verification-header h2 {
+                font-size: 22px;
+            }
+            
+            .verification-header p {
+                font-size: 15px;
             }
         }
 
@@ -332,14 +390,76 @@
                 flex-direction: column;
             }
             
-            .face-overlay {
-                width: 160px;
-                height: 200px;
+            .camera-frame {
+                width: 220px;
+                height: 280px;
+            }
+            
+            .preview-image {
+                width: 220px;
+                height: 280px;
+            }
+            
+            .face-overlay::before {
+                font-size: 13px;
+                bottom: -40px;
+                padding: 4px 10px;
+            }
+            
+            .instructions {
+                padding: 15px;
+            }
+            
+            .instructions h3 {
+                font-size: 16px;
+            }
+            
+            .instructions li {
+                font-size: 13px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .verification-container {
+                padding: 40px;
             }
             
             .camera-frame {
-                height: 220px;
+                width: 300px;
+                height: 375px;
             }
+            
+            .preview-image {
+                width: 300px;
+                height: 375px;
+            }
+        }
+
+        /* Animações */
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .loading {
+            animation: pulse 1.5s infinite;
+        }
+
+        /* Melhorias de acessibilidade */
+        @media (prefers-reduced-motion: reduce) {
+            .btn:hover {
+                transform: none;
+            }
+            
+            .loading {
+                animation: none;
+            }
+        }
+
+        /* Scroll suave */
+        html {
+            scroll-behavior: smooth;
         }
     </style>
 </head>
@@ -363,9 +483,9 @@
                     <p>Posicione seu rosto dentro do formato oval para continuar</p>
                 </div>
 
-                <div class="status-indicator info" id="statusIndicator">
+                <div class="status-indicator" id="statusIndicator">
                     <i class="fas fa-info-circle"></i>
-                    <span id="statusText">Aguardando acesso à câmera</span>
+                    <span id="statusText">Iniciando câmera...</span>
                 </div>
 
                 <div class="camera-container">
@@ -375,6 +495,7 @@
                         <div class="camera-placeholder" id="cameraPlaceholder">
                             <i class="fas fa-camera"></i>
                             <p>Câmera não acessível</p>
+                            <p style="font-size: 12px; margin-top: 10px;">Verifique as permissões do navegador</p>
                         </div>
                     </div>
                 </div>
@@ -387,7 +508,9 @@
                 </div>
 
                 <div class="preview-container" id="previewContainer">
-                    <img id="previewImage" class="preview-image" src="" alt="Preview da foto">
+                    <div class="preview-image-container">
+                        <img id="previewImage" class="preview-image" src="" alt="Preview da foto capturada">
+                    </div>
                     <div class="button-group">
                         <button class="btn btn-secondary" id="retakeBtn">
                             <i class="fas fa-redo"></i>
@@ -443,7 +566,7 @@
             let faceDetected = false;
             let faceDetectionInterval = null;
             
-            // Inicializar câmera
+            // Inicializar câmera automaticamente
             initCamera();
             
             // Event Listeners
@@ -454,10 +577,12 @@
             // Função para inicializar a câmera
             async function initCamera() {
                 try {
+                    updateStatus('Solicitando acesso à câmera...', 'info');
+                    
                     // Solicitar acesso à câmera frontal por padrão
                     stream = await navigator.mediaDevices.getUserMedia({
                         video: { 
-                            facingMode: 'user', // Sempre usar câmera frontal
+                            facingMode: 'user',
                             width: { ideal: 1280 },
                             height: { ideal: 720 }
                         }
@@ -473,18 +598,36 @@
                     // Atualizar status
                     updateStatus('Câmera ativa - Posicione seu rosto no formato oval', 'info');
                     
-                    // Simular detecção facial após 2 segundos
+                    // Simular detecção facial após 4 segundos
                     setTimeout(() => {
                         simulateFaceDetection();
-                    }, 2000);
+                    }, 4000);
                     
                 } catch (error) {
                     console.error('Erro ao acessar a câmera:', error);
-                    cameraPlaceholder.style.display = 'flex';
-                    videoElement.style.display = 'none';
-                    updateStatus('Erro ao acessar a câmera. Verifique as permissões.', 'error');
-                    captureBtn.disabled = true;
+                    handleCameraError(error);
                 }
+            }
+            
+            // Função para tratar erros da câmera
+            function handleCameraError(error) {
+                cameraPlaceholder.style.display = 'flex';
+                videoElement.style.display = 'none';
+                
+                let errorMessage = 'Erro ao acessar a câmera. ';
+                
+                if (error.name === 'NotAllowedError') {
+                    errorMessage += 'Permissão negada. Por favor, permita o acesso à câmera nas configurações do seu navegador.';
+                } else if (error.name === 'NotFoundError') {
+                    errorMessage += 'Nenhuma câmera encontrada. Verifique se seu dispositivo possui uma câmera.';
+                } else if (error.name === 'NotSupportedError') {
+                    errorMessage += 'Navegador não suportado. Tente usar Chrome, Firefox ou Safari.';
+                } else {
+                    errorMessage += 'Verifique as permissões do navegador.';
+                }
+                
+                updateStatus(errorMessage, 'error');
+                captureBtn.disabled = true;
             }
             
             // Função para simular detecção facial
@@ -508,32 +651,53 @@
                     return;
                 }
                 
-                // Criar canvas para capturar o frame atual
-                const canvas = document.createElement('canvas');
-                canvas.width = videoElement.videoWidth;
-                canvas.height = videoElement.videoHeight;
-                const context = canvas.getContext('2d');
-                
-                // Espelhar a imagem para corresponder ao preview
-                context.translate(canvas.width, 0);
-                context.scale(-1, 1);
-                context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-                
-                // Converter para data URL
-                const imageDataUrl = canvas.toDataURL('image/png');
-                
-                // Exibir preview
-                previewImage.src = imageDataUrl;
-                previewContainer.style.display = 'block';
-                
-                // Parar detecção facial
-                faceDetected = false;
-                if (faceDetectionInterval) {
-                    clearInterval(faceDetectionInterval);
+                try {
+                    // Criar canvas para capturar o frame atual
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Definir dimensões do canvas
+                    canvas.width = videoElement.videoWidth;
+                    canvas.height = videoElement.videoHeight;
+                    
+                    // Aplicar máscara oval
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.ellipse(
+                        canvas.width / 2, 
+                        canvas.height / 2, 
+                        canvas.width / 2.2, 
+                        canvas.height / 2.1, 
+                        0, 0, 2 * Math.PI
+                    );
+                    ctx.clip();
+                    
+                    // Espelhar a imagem para corresponder ao preview
+                    ctx.translate(canvas.width, 0);
+                    ctx.scale(-1, 1);
+                    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                    ctx.restore();
+                    
+                    // Converter para data URL
+                    const imageDataUrl = canvas.toDataURL('image/png');
+                    
+                    // Exibir preview
+                    previewImage.src = imageDataUrl;
+                    previewContainer.style.display = 'block';
+                    
+                    // Parar detecção facial
+                    faceDetected = false;
+                    if (faceDetectionInterval) {
+                        clearInterval(faceDetectionInterval);
+                    }
+                    
+                    // Atualizar status
+                    updateStatus('Foto capturada. Confirme ou tire outra.', 'info');
+                    
+                } catch (error) {
+                    console.error('Erro ao capturar foto:', error);
+                    updateStatus('Erro ao capturar foto. Tente novamente.', 'error');
                 }
-                
-                // Atualizar status
-                updateStatus('Foto capturada. Confirme ou tire outra.', 'info');
             }
             
             // Função para refazer a foto
@@ -541,29 +705,33 @@
                 previewContainer.style.display = 'none';
                 updateStatus('Câmera ativa - Posicione seu rosto no formato oval', 'info');
                 
-                // Simular detecção facial novamente após 1 segundo
+                // Simular detecção facial novamente após 2 segundos
                 setTimeout(() => {
                     simulateFaceDetection();
-                }, 1000);
+                }, 2000);
             }
             
             // Função para confirmar a foto
             function confirmPhoto() {
                 updateStatus('Processando verificação...', 'info');
+                confirmBtn.disabled = true;
+                retakeBtn.disabled = true;
+                
+                // Adicionar efeito de loading
+                statusIndicator.classList.add('loading');
                 
                 // Simular processamento
                 setTimeout(() => {
+                    statusIndicator.classList.remove('loading');
                     updateStatus('Verificação concluída com sucesso!', 'success');
-                    
-                    // Desabilitar botões após confirmação
-                    captureBtn.disabled = true;
-                    confirmBtn.disabled = true;
                     
                     // Mostrar mensagem de sucesso
                     setTimeout(() => {
                         alert('Verificação concluída! Sua identidade foi confirmada com sucesso.');
-                    }, 500);
-                }, 2000);
+                        // Recarregar a página para nova verificação
+                        window.location.reload();
+                    }, 1000);
+                }, 3000);
             }
             
             // Função para atualizar o status
@@ -571,13 +739,14 @@
                 statusText.textContent = message;
                 
                 // Remover classes anteriores
-                statusIndicator.classList.remove('success', 'info');
+                statusIndicator.classList.remove('success', 'error', 'info');
                 
                 // Adicionar classe baseada no tipo
                 if (type === 'success') {
                     statusIndicator.classList.add('success');
                     statusIndicator.innerHTML = `<i class="fas fa-check-circle"></i><span>${message}</span>`;
                 } else if (type === 'error') {
+                    statusIndicator.classList.add('error');
                     statusIndicator.innerHTML = `<i class="fas fa-exclamation-circle"></i><span>${message}</span>`;
                 } else {
                     statusIndicator.classList.add('info');
@@ -594,6 +763,13 @@
                     clearInterval(faceDetectionInterval);
                 }
             });
+            
+            // Prevenir problemas de zoom em dispositivos móveis
+            document.addEventListener('touchstart', function(e) {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
         });
     </script>
 </body>
