@@ -145,6 +145,11 @@
             z-index: 2;
             pointer-events: none;
             box-sizing: border-box;
+            transition: border-color 0.5s ease;
+        }
+
+        .face-overlay.verified {
+            border-color: var(--success);
         }
 
         .face-overlay::before {
@@ -486,7 +491,7 @@
                 <div class="camera-section" id="cameraSection">
                     <div class="camera-container">
                         <div class="camera-frame">
-                            <div class="face-overlay"></div>
+                            <div class="face-overlay" id="faceOverlay"></div>
                             <video id="videoElement" class="video-element" autoplay playsinline></video>
                             <div class="camera-placeholder" id="cameraPlaceholder">
                                 <i class="fas fa-camera"></i>
@@ -559,6 +564,7 @@
             const previewImage = document.getElementById('previewImage');
             const retakeBtn = document.getElementById('retakeBtn');
             const confirmBtn = document.getElementById('confirmBtn');
+            const faceOverlay = document.getElementById('faceOverlay');
             
             // Variáveis de estado
             let stream = null;
@@ -724,6 +730,9 @@
                 cameraSection.style.display = 'block';
                 previewSection.style.display = 'none';
                 
+                // Resetar a cor da borda para amarelo
+                faceOverlay.classList.remove('verified');
+                
                 // Reiniciar câmera
                 initCamera();
                 
@@ -743,6 +752,13 @@
                 // Simular processamento
                 setTimeout(() => {
                     statusIndicator.classList.remove('loading');
+                    
+                    // Mudar a cor da borda para verde
+                    faceOverlay.classList.add('verified');
+                    
+                    // Esconder a câmera
+                    cameraSection.style.display = 'none';
+                    
                     updateStatus('Verificação concluída com sucesso!', 'success');
                     
                     // Mostrar mensagem de sucesso
