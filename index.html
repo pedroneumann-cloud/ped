@@ -286,6 +286,7 @@
             display: flex;
             justify-content: center;
             margin-bottom: 20px;
+            position: relative;
         }
 
         .preview-image {
@@ -294,6 +295,8 @@
             border-radius: 40% / 50%;
             border: 3px solid var(--primary);
             object-fit: cover;
+            z-index: 1;
+            position: relative;
         }
 
         /* Instructions */
@@ -461,6 +464,19 @@
         html {
             scroll-behavior: smooth;
         }
+
+        /* Esconder controles nativos do vídeo */
+        .video-element::-webkit-media-controls {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-enclosure {
+            display: none !important;
+        }
+        
+        .video-element::-webkit-media-controls-panel {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -595,6 +611,10 @@
                     cameraPlaceholder.style.display = 'none';
                     videoElement.style.display = 'block';
                     
+                    // Remover controles nativos do vídeo
+                    videoElement.controls = false;
+                    videoElement.setAttribute('controlslist', 'nofullscreen nodownload noremoteplayback noplaybackrate');
+                    
                     // Atualizar status
                     updateStatus('Câmera ativa - Posicione seu rosto no formato oval', 'info');
                     
@@ -656,9 +676,29 @@
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
                     
-                    // Definir dimensões do canvas
-                    canvas.width = videoElement.videoWidth;
-                    canvas.height = videoElement.videoHeight;
+                    // Definir dimensões do canvas para coincidir com a moldura
+                    canvas.width = 280;
+                    canvas.height = 350;
+                    
+                    // Calcular escala para preencher o formato oval
+                    const videoAspect = videoElement.videoWidth / videoElement.videoHeight;
+                    const frameAspect = canvas.width / canvas.height;
+                    
+                    let drawWidth, drawHeight, offsetX, offsetY;
+                    
+                    if (videoAspect > frameAspect) {
+                        // Vídeo é mais largo que a moldura
+                        drawHeight = canvas.height;
+                        drawWidth = videoElement.videoWidth * (canvas.height / videoElement.videoHeight);
+                        offsetX = (canvas.width - drawWidth) / 2;
+                        offsetY = 0;
+                    } else {
+                        // Vídeo é mais alto que a moldura
+                        drawWidth = canvas.width;
+                        drawHeight = videoElement.videoHeight * (canvas.width / videoElement.videoWidth);
+                        offsetX = 0;
+                        offsetY = (canvas.height - drawHeight) / 2;
+                    }
                     
                     // Aplicar máscara oval
                     ctx.save();
@@ -675,15 +715,19 @@
                     // Espelhar a imagem para corresponder ao preview
                     ctx.translate(canvas.width, 0);
                     ctx.scale(-1, 1);
-                    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                    
+                    // Desenhar a imagem do vídeo no canvas
+                    ctx.drawImage(videoElement, offsetX, offsetY, drawWidth, drawHeight);
                     ctx.restore();
                     
                     // Converter para data URL
                     const imageDataUrl = canvas.toDataURL('image/png');
                     
-                    // Exibir preview
+                    // Exibir preview e esconder câmera
                     previewImage.src = imageDataUrl;
                     previewContainer.style.display = 'block';
+                    document.querySelector('.camera-container').style.display = 'none';
+                    captureBtn.style.display = 'none';
                     
                     // Parar detecção facial
                     faceDetected = false;
@@ -703,6 +747,8 @@
             // Função para refazer a foto
             function retakePhoto() {
                 previewContainer.style.display = 'none';
+                document.querySelector('.camera-container').style.display = 'flex';
+                captureBtn.style.display = 'flex';
                 updateStatus('Câmera ativa - Posicione seu rosto no formato oval', 'info');
                 
                 // Simular detecção facial novamente após 2 segundos
