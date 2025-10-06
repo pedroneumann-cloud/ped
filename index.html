@@ -124,7 +124,7 @@
             width: 280px;
             height: 350px;
             background-color: var(--gray);
-            border-radius: 45% / 60%;
+            border-radius: 40% / 50%;
             overflow: hidden;
             position: relative;
             display: flex;
@@ -136,7 +136,7 @@
             width: 100%;
             height: 100%;
             border: 3px solid var(--primary);
-            border-radius: 45% / 60%;
+            border-radius: 40% / 50%;
             position: absolute;
             z-index: 2;
             pointer-events: none;
@@ -164,7 +164,7 @@
             height: 100%;
             object-fit: cover;
             transform: scaleX(-1);
-            border-radius: 45% / 60%;
+            border-radius: 40% / 50%;
         }
 
         .camera-placeholder {
@@ -174,7 +174,7 @@
             justify-content: center;
             height: 100%;
             color: var(--dark-gray);
-            border-radius: 45% / 60%;
+            border-radius: 40% / 50%;
             background: var(--gray);
             width: 100%;
             text-align: center;
@@ -184,67 +184,6 @@
         .camera-placeholder i {
             font-size: 48px;
             margin-bottom: 15px;
-        }
-
-        /* Permission Request */
-        .permission-request {
-            background: var(--white);
-            border: 2px solid var(--primary);
-            border-radius: var(--radius);
-            padding: 25px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow);
-        }
-
-        .permission-request h3 {
-            margin-bottom: 15px;
-            color: var(--secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .permission-request p {
-            margin-bottom: 20px;
-            color: var(--dark-gray);
-            font-size: 15px;
-        }
-
-        .permission-buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-        }
-
-        .btn-permission {
-            padding: 12px 24px;
-            border: none;
-            border-radius: var(--radius);
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 120px;
-        }
-
-        .btn-deny {
-            background-color: var(--gray);
-            color: var(--secondary);
-        }
-
-        .btn-deny:hover {
-            background-color: var(--dark-gray);
-            color: var(--white);
-        }
-
-        .btn-allow {
-            background-color: var(--primary);
-            color: var(--secondary);
-        }
-
-        .btn-allow:hover {
-            background-color: var(--primary-dark);
         }
 
         /* Status */
@@ -352,7 +291,7 @@
         .preview-image {
             width: 280px;
             height: 350px;
-            border-radius: 45% / 60%;
+            border-radius: 40% / 50%;
             border: 3px solid var(--primary);
             object-fit: cover;
         }
@@ -444,18 +383,6 @@
             .verification-header p {
                 font-size: 15px;
             }
-            
-            .permission-request {
-                padding: 20px;
-            }
-            
-            .permission-buttons {
-                flex-direction: column;
-            }
-            
-            .btn-permission {
-                min-width: 100%;
-            }
         }
 
         @media (max-width: 480px) {
@@ -530,31 +457,9 @@
             }
         }
 
-        /* Estados ocultos */
-        .hidden {
-            display: none !important;
-        }
-
-        /* Loading states */
-        .btn-loading {
-            position: relative;
-            color: transparent !important;
-        }
-
-        .btn-loading::after {
-            content: '';
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            border: 2px solid transparent;
-            border-top: 2px solid currentColor;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        /* Scroll suave */
+        html {
+            scroll-behavior: smooth;
         }
     </style>
 </head>
@@ -578,30 +483,16 @@
                     <p>Posicione seu rosto dentro do formato oval para continuar</p>
                 </div>
 
-                <!-- Solicitação de Permissão da Câmera -->
-                <div class="permission-request" id="permissionRequest">
-                    <h3><i class="fas fa-camera"></i> Acesso à Câmera Necessário</h3>
-                    <p>Para realizar a verificação de identidade, precisamos acessar sua câmera. Sua privacidade é importante - as imagens são processadas localmente e não são armazenadas.</p>
-                    <div class="permission-buttons">
-                        <button class="btn-permission btn-deny" id="denyBtn">
-                            Não Permitir
-                        </button>
-                        <button class="btn-permission btn-allow" id="allowBtn">
-                            <i class="fas fa-check"></i> Permitir Câmera
-                        </button>
-                    </div>
-                </div>
-
-                <div class="status-indicator hidden" id="statusIndicator">
+                <div class="status-indicator" id="statusIndicator">
                     <i class="fas fa-info-circle"></i>
-                    <span id="statusText">Processando...</span>
+                    <span id="statusText">Iniciando câmera...</span>
                 </div>
 
-                <div class="camera-container hidden" id="cameraSection">
+                <div class="camera-container">
                     <div class="camera-frame">
                         <div class="face-overlay"></div>
                         <video id="videoElement" class="video-element" autoplay playsinline></video>
-                        <div class="camera-placeholder hidden" id="cameraPlaceholder">
+                        <div class="camera-placeholder" id="cameraPlaceholder">
                             <i class="fas fa-camera"></i>
                             <p>Câmera não acessível</p>
                             <p style="font-size: 12px; margin-top: 10px;">Verifique as permissões do navegador</p>
@@ -609,14 +500,14 @@
                     </div>
                 </div>
 
-                <div class="button-group hidden" id="captureSection">
-                    <button class="btn btn-primary" id="captureBtn">
+                <div class="button-group">
+                    <button class="btn btn-primary" id="captureBtn" disabled>
                         <i class="fas fa-camera"></i>
                         Tirar Foto
                     </button>
                 </div>
 
-                <div class="preview-container hidden" id="previewContainer">
+                <div class="preview-container" id="previewContainer">
                     <div class="preview-image-container">
                         <img id="previewImage" class="preview-image" src="" alt="Preview da foto capturada">
                     </div>
@@ -660,44 +551,35 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Elementos DOM
-            const permissionRequest = document.getElementById('permissionRequest');
-            const statusIndicator = document.getElementById('statusIndicator');
-            const statusText = document.getElementById('statusText');
-            const cameraSection = document.getElementById('cameraSection');
             const videoElement = document.getElementById('videoElement');
             const cameraPlaceholder = document.getElementById('cameraPlaceholder');
-            const captureSection = document.getElementById('captureSection');
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
             const captureBtn = document.getElementById('captureBtn');
             const previewContainer = document.getElementById('previewContainer');
             const previewImage = document.getElementById('previewImage');
             const retakeBtn = document.getElementById('retakeBtn');
             const confirmBtn = document.getElementById('confirmBtn');
-            const allowBtn = document.getElementById('allowBtn');
-            const denyBtn = document.getElementById('denyBtn');
             
             // Variáveis de estado
             let stream = null;
             let faceDetected = false;
             let faceDetectionInterval = null;
-            let permissionGranted = false;
+            
+            // Inicializar câmera automaticamente
+            initCamera();
             
             // Event Listeners
-            allowBtn.addEventListener('click', requestCameraPermission);
-            denyBtn.addEventListener('click', handlePermissionDenied);
             captureBtn.addEventListener('click', capturePhoto);
             retakeBtn.addEventListener('click', retakePhoto);
             confirmBtn.addEventListener('click', confirmPhoto);
             
-            // Função para solicitar permissão da câmera
-            async function requestCameraPermission() {
+            // Função para inicializar a câmera
+            async function initCamera() {
                 try {
-                    // Mostrar estado de carregamento
-                    allowBtn.classList.add('btn-loading');
-                    allowBtn.disabled = true;
-                    statusIndicator.classList.remove('hidden');
                     updateStatus('Solicitando acesso à câmera...', 'info');
                     
-                    // Solicitar acesso à câmera frontal diretamente
+                    // Solicitar acesso à câmera frontal por padrão
                     stream = await navigator.mediaDevices.getUserMedia({
                         video: { 
                             facingMode: 'user',
@@ -706,24 +588,15 @@
                         }
                     });
                     
-                    permissionGranted = true;
-                    
-                    // Esconder solicitação de permissão
-                    permissionRequest.classList.add('hidden');
-                    
                     // Conectar o stream ao elemento de vídeo
                     videoElement.srcObject = stream;
                     
-                    // Mostrar seção da câmera
-                    cameraSection.classList.remove('hidden');
+                    // Esconder placeholder e mostrar vídeo
+                    cameraPlaceholder.style.display = 'none';
+                    videoElement.style.display = 'block';
                     
                     // Atualizar status
                     updateStatus('Câmera ativa - Posicione seu rosto no formato oval', 'info');
-                    
-                    // Mostrar botão de captura após um breve delay
-                    setTimeout(() => {
-                        captureSection.classList.remove('hidden');
-                    }, 1000);
                     
                     // Simular detecção facial após 4 segundos
                     setTimeout(() => {
@@ -733,45 +606,34 @@
                 } catch (error) {
                     console.error('Erro ao acessar a câmera:', error);
                     handleCameraError(error);
-                } finally {
-                    allowBtn.classList.remove('btn-loading');
-                    allowBtn.disabled = false;
                 }
-            }
-            
-            // Função para tratar negação de permissão
-            function handlePermissionDenied() {
-                permissionRequest.classList.add('hidden');
-                statusIndicator.classList.remove('hidden');
-                updateStatus('A câmera é necessária para a verificação de identidade. Você pode recarregar a página para tentar novamente.', 'error');
             }
             
             // Função para tratar erros da câmera
             function handleCameraError(error) {
+                cameraPlaceholder.style.display = 'flex';
+                videoElement.style.display = 'none';
+                
                 let errorMessage = 'Erro ao acessar a câmera. ';
                 
                 if (error.name === 'NotAllowedError') {
-                    errorMessage = 'Permissão da câmera negada. Por favor, permita o acesso à câmera nas configurações do seu navegador e recarregue a página.';
+                    errorMessage += 'Permissão negada. Por favor, permita o acesso à câmera nas configurações do seu navegador.';
                 } else if (error.name === 'NotFoundError') {
-                    errorMessage = 'Nenhuma câmera frontal encontrada. Verifique se seu dispositivo possui uma câmera frontal.';
+                    errorMessage += 'Nenhuma câmera encontrada. Verifique se seu dispositivo possui uma câmera.';
                 } else if (error.name === 'NotSupportedError') {
-                    errorMessage = 'Seu navegador não suporta acesso à câmera. Tente usar Chrome, Firefox ou Safari.';
-                } else if (error.name === 'NotReadableError') {
-                    errorMessage = 'A câmera está sendo usada por outro aplicativo. Feche outros aplicativos que possam estar usando a câmera.';
+                    errorMessage += 'Navegador não suportado. Tente usar Chrome, Firefox ou Safari.';
                 } else {
-                    errorMessage = 'Não foi possível acessar a câmera. Verifique as permissões do navegador.';
+                    errorMessage += 'Verifique as permissões do navegador.';
                 }
                 
                 updateStatus(errorMessage, 'error');
-                permissionRequest.classList.add('hidden');
-                statusIndicator.classList.remove('hidden');
+                captureBtn.disabled = true;
             }
             
             // Função para simular detecção facial
             function simulateFaceDetection() {
-                if (!permissionGranted) return;
-                
                 updateStatus('Rosto detectado! Você pode tirar a foto.', 'success');
+                captureBtn.disabled = false;
                 faceDetected = true;
                 
                 // Simular que o rosto está sendo rastreado
@@ -798,15 +660,16 @@
                     canvas.width = videoElement.videoWidth;
                     canvas.height = videoElement.videoHeight;
                     
-                    // Aplicar máscara oval específica (45% / 60%)
+                    // Aplicar máscara oval
                     ctx.save();
                     ctx.beginPath();
-                    const centerX = canvas.width / 2;
-                    const centerY = canvas.height / 2;
-                    const radiusX = canvas.width / 2.2;  // 45% da largura
-                    const radiusY = canvas.height / 1.67; // 60% da altura
-                    
-                    ctx.ellipse(centerX, centerY, radiusX, radiusY, 0, 0, 2 * Math.PI);
+                    ctx.ellipse(
+                        canvas.width / 2, 
+                        canvas.height / 2, 
+                        canvas.width / 2.2, 
+                        canvas.height / 2.1, 
+                        0, 0, 2 * Math.PI
+                    );
                     ctx.clip();
                     
                     // Espelhar a imagem para corresponder ao preview
@@ -820,8 +683,7 @@
                     
                     // Exibir preview
                     previewImage.src = imageDataUrl;
-                    previewContainer.classList.remove('hidden');
-                    captureSection.classList.add('hidden');
+                    previewContainer.style.display = 'block';
                     
                     // Parar detecção facial
                     faceDetected = false;
@@ -840,8 +702,7 @@
             
             // Função para refazer a foto
             function retakePhoto() {
-                previewContainer.classList.add('hidden');
-                captureSection.classList.remove('hidden');
+                previewContainer.style.display = 'none';
                 updateStatus('Câmera ativa - Posicione seu rosto no formato oval', 'info');
                 
                 // Simular detecção facial novamente após 2 segundos
@@ -866,8 +727,10 @@
                     
                     // Mostrar mensagem de sucesso
                     setTimeout(() => {
-                        alert('✅ Verificação concluída! Sua identidade foi confirmada com sucesso.');
-                    }, 500);
+                        alert('Verificação concluída! Sua identidade foi confirmada com sucesso.');
+                        // Recarregar a página para nova verificação
+                        window.location.reload();
+                    }, 1000);
                 }, 3000);
             }
             
@@ -900,6 +763,13 @@
                     clearInterval(faceDetectionInterval);
                 }
             });
+            
+            // Prevenir problemas de zoom em dispositivos móveis
+            document.addEventListener('touchstart', function(e) {
+                if (e.touches.length > 1) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
         });
     </script>
 </body>
